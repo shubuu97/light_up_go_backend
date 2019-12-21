@@ -1,0 +1,38 @@
+syntax = 'proto3';
+
+package proto;
+
+import "common.proto";
+
+option go_package = "light-up-backend/light-seeker-service/proto";
+
+service LightSeekerService {
+    rpc CreateLightSeeker (CreateLightSeekerRequest) returns (LightSeekerResponse) {}
+    rpc GetLightSeekerById (IdRequest) returns (LightSeekerResponse) {}
+    rpc GetLightSeekerByEmail (EmailRequest) returns (LightSeekerResponse) {}
+    rpc GetLightSeekers (Empty) returns (LightSeekerResponse) {}
+}
+
+message LightSeeker{
+    string id = 1;
+    string firstName = 2;
+    string lastName = 3;
+    string email = 4;
+    string password = 5;
+    string mobile = 6;
+    string country = 7;
+    string state = 8;
+    string city = 9;
+    string image = 10;
+    bool isActive = 11;
+    UserTypes type = 12;
+}
+
+message CreateLightSeekerRequest{
+    LightSeeker lightSeeker = 1;
+}
+
+message LightSeekerResponse{
+    LightSeeker lightSeeker = 1;
+    repeated LightSeeker lightSeekers = 2;
+}

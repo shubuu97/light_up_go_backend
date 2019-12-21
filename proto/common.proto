@@ -1,0 +1,27 @@
+syntax = 'proto3';
+
+package proto;
+
+option go_package = "light-up-backend/common/proto";
+
+message IdRequest {
+    string id = 1;
+}
+
+message EmailRequest {
+    string email = 1;
+}
+
+message IdsRequest {
+    repeated string ids = 1;
+}
+
+message Empty {
+
+}
+
+enum UserTypes {
+    LIGHTER = 0;
+    LIGHT_SEEKER = 1;
+    ADMIN = 2;
+}

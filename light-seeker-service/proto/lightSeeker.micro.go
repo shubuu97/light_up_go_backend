@@ -6,6 +6,7 @@ package proto
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/timestamp"
 	proto1 "light-up-backend/common/proto"
 	math "math"
 )
@@ -35,10 +36,12 @@ var _ server.Option
 // Client API for LightSeekerService service
 
 type LightSeekerService interface {
-	CreateLightSeeker(ctx context.Context, in *CreateLightSeekerRequest, opts ...client.CallOption) (*LightSeekerResponse, error)
+	CreateLightSeeker(ctx context.Context, in *LightSeekerRequest, opts ...client.CallOption) (*LightSeekerResponse, error)
 	GetLightSeekerById(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LightSeekerResponse, error)
 	GetLightSeekerByEmail(ctx context.Context, in *proto1.EmailRequest, opts ...client.CallOption) (*LightSeekerResponse, error)
 	GetLightSeekers(ctx context.Context, in *proto1.Empty, opts ...client.CallOption) (*LightSeekerResponse, error)
+	ValidateLightSeekerUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LightSeekerResponse, error)
+	InValidateLightSeekerUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LightSeekerResponse, error)
 }
 
 type lightSeekerService struct {
@@ -59,7 +62,7 @@ func NewLightSeekerService(name string, c client.Client) LightSeekerService {
 	}
 }
 
-func (c *lightSeekerService) CreateLightSeeker(ctx context.Context, in *CreateLightSeekerRequest, opts ...client.CallOption) (*LightSeekerResponse, error) {
+func (c *lightSeekerService) CreateLightSeeker(ctx context.Context, in *LightSeekerRequest, opts ...client.CallOption) (*LightSeekerResponse, error) {
 	req := c.c.NewRequest(c.name, "LightSeekerService.CreateLightSeeker", in)
 	out := new(LightSeekerResponse)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -99,21 +102,45 @@ func (c *lightSeekerService) GetLightSeekers(ctx context.Context, in *proto1.Emp
 	return out, nil
 }
 
+func (c *lightSeekerService) ValidateLightSeekerUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LightSeekerResponse, error) {
+	req := c.c.NewRequest(c.name, "LightSeekerService.ValidateLightSeekerUser", in)
+	out := new(LightSeekerResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lightSeekerService) InValidateLightSeekerUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LightSeekerResponse, error) {
+	req := c.c.NewRequest(c.name, "LightSeekerService.InValidateLightSeekerUser", in)
+	out := new(LightSeekerResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for LightSeekerService service
 
 type LightSeekerServiceHandler interface {
-	CreateLightSeeker(context.Context, *CreateLightSeekerRequest, *LightSeekerResponse) error
+	CreateLightSeeker(context.Context, *LightSeekerRequest, *LightSeekerResponse) error
 	GetLightSeekerById(context.Context, *proto1.IdRequest, *LightSeekerResponse) error
 	GetLightSeekerByEmail(context.Context, *proto1.EmailRequest, *LightSeekerResponse) error
 	GetLightSeekers(context.Context, *proto1.Empty, *LightSeekerResponse) error
+	ValidateLightSeekerUser(context.Context, *proto1.IdRequest, *LightSeekerResponse) error
+	InValidateLightSeekerUser(context.Context, *proto1.IdRequest, *LightSeekerResponse) error
 }
 
 func RegisterLightSeekerServiceHandler(s server.Server, hdlr LightSeekerServiceHandler, opts ...server.HandlerOption) error {
 	type lightSeekerService interface {
-		CreateLightSeeker(ctx context.Context, in *CreateLightSeekerRequest, out *LightSeekerResponse) error
+		CreateLightSeeker(ctx context.Context, in *LightSeekerRequest, out *LightSeekerResponse) error
 		GetLightSeekerById(ctx context.Context, in *proto1.IdRequest, out *LightSeekerResponse) error
 		GetLightSeekerByEmail(ctx context.Context, in *proto1.EmailRequest, out *LightSeekerResponse) error
 		GetLightSeekers(ctx context.Context, in *proto1.Empty, out *LightSeekerResponse) error
+		ValidateLightSeekerUser(ctx context.Context, in *proto1.IdRequest, out *LightSeekerResponse) error
+		InValidateLightSeekerUser(ctx context.Context, in *proto1.IdRequest, out *LightSeekerResponse) error
 	}
 	type LightSeekerService struct {
 		lightSeekerService
@@ -126,7 +153,7 @@ type lightSeekerServiceHandler struct {
 	LightSeekerServiceHandler
 }
 
-func (h *lightSeekerServiceHandler) CreateLightSeeker(ctx context.Context, in *CreateLightSeekerRequest, out *LightSeekerResponse) error {
+func (h *lightSeekerServiceHandler) CreateLightSeeker(ctx context.Context, in *LightSeekerRequest, out *LightSeekerResponse) error {
 	return h.LightSeekerServiceHandler.CreateLightSeeker(ctx, in, out)
 }
 
@@ -140,4 +167,12 @@ func (h *lightSeekerServiceHandler) GetLightSeekerByEmail(ctx context.Context, i
 
 func (h *lightSeekerServiceHandler) GetLightSeekers(ctx context.Context, in *proto1.Empty, out *LightSeekerResponse) error {
 	return h.LightSeekerServiceHandler.GetLightSeekers(ctx, in, out)
+}
+
+func (h *lightSeekerServiceHandler) ValidateLightSeekerUser(ctx context.Context, in *proto1.IdRequest, out *LightSeekerResponse) error {
+	return h.LightSeekerServiceHandler.ValidateLightSeekerUser(ctx, in, out)
+}
+
+func (h *lightSeekerServiceHandler) InValidateLightSeekerUser(ctx context.Context, in *proto1.IdRequest, out *LightSeekerResponse) error {
+	return h.LightSeekerServiceHandler.InValidateLightSeekerUser(ctx, in, out)
 }

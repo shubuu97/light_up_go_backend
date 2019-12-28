@@ -6,6 +6,7 @@ package proto
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/timestamp"
 	proto1 "light-up-backend/common/proto"
 	math "math"
 )
@@ -35,10 +36,13 @@ var _ server.Option
 // Client API for LighterService service
 
 type LighterService interface {
-	CreateLighter(ctx context.Context, in *CreateLighterRequest, opts ...client.CallOption) (*LighterResponse, error)
+	CreateLighter(ctx context.Context, in *LighterRequest, opts ...client.CallOption) (*LighterResponse, error)
 	GetLighterById(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LighterResponse, error)
 	GetLighterByEmail(ctx context.Context, in *proto1.EmailRequest, opts ...client.CallOption) (*LighterResponse, error)
 	GetLighters(ctx context.Context, in *proto1.Empty, opts ...client.CallOption) (*LighterResponse, error)
+	VerifyLighterUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LighterResponse, error)
+	ValidateLighterUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LighterResponse, error)
+	InValidateLighterUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LighterResponse, error)
 }
 
 type lighterService struct {
@@ -59,7 +63,7 @@ func NewLighterService(name string, c client.Client) LighterService {
 	}
 }
 
-func (c *lighterService) CreateLighter(ctx context.Context, in *CreateLighterRequest, opts ...client.CallOption) (*LighterResponse, error) {
+func (c *lighterService) CreateLighter(ctx context.Context, in *LighterRequest, opts ...client.CallOption) (*LighterResponse, error) {
 	req := c.c.NewRequest(c.name, "LighterService.CreateLighter", in)
 	out := new(LighterResponse)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -99,21 +103,57 @@ func (c *lighterService) GetLighters(ctx context.Context, in *proto1.Empty, opts
 	return out, nil
 }
 
+func (c *lighterService) VerifyLighterUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LighterResponse, error) {
+	req := c.c.NewRequest(c.name, "LighterService.VerifyLighterUser", in)
+	out := new(LighterResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lighterService) ValidateLighterUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LighterResponse, error) {
+	req := c.c.NewRequest(c.name, "LighterService.ValidateLighterUser", in)
+	out := new(LighterResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lighterService) InValidateLighterUser(ctx context.Context, in *proto1.IdRequest, opts ...client.CallOption) (*LighterResponse, error) {
+	req := c.c.NewRequest(c.name, "LighterService.InValidateLighterUser", in)
+	out := new(LighterResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for LighterService service
 
 type LighterServiceHandler interface {
-	CreateLighter(context.Context, *CreateLighterRequest, *LighterResponse) error
+	CreateLighter(context.Context, *LighterRequest, *LighterResponse) error
 	GetLighterById(context.Context, *proto1.IdRequest, *LighterResponse) error
 	GetLighterByEmail(context.Context, *proto1.EmailRequest, *LighterResponse) error
 	GetLighters(context.Context, *proto1.Empty, *LighterResponse) error
+	VerifyLighterUser(context.Context, *proto1.IdRequest, *LighterResponse) error
+	ValidateLighterUser(context.Context, *proto1.IdRequest, *LighterResponse) error
+	InValidateLighterUser(context.Context, *proto1.IdRequest, *LighterResponse) error
 }
 
 func RegisterLighterServiceHandler(s server.Server, hdlr LighterServiceHandler, opts ...server.HandlerOption) error {
 	type lighterService interface {
-		CreateLighter(ctx context.Context, in *CreateLighterRequest, out *LighterResponse) error
+		CreateLighter(ctx context.Context, in *LighterRequest, out *LighterResponse) error
 		GetLighterById(ctx context.Context, in *proto1.IdRequest, out *LighterResponse) error
 		GetLighterByEmail(ctx context.Context, in *proto1.EmailRequest, out *LighterResponse) error
 		GetLighters(ctx context.Context, in *proto1.Empty, out *LighterResponse) error
+		VerifyLighterUser(ctx context.Context, in *proto1.IdRequest, out *LighterResponse) error
+		ValidateLighterUser(ctx context.Context, in *proto1.IdRequest, out *LighterResponse) error
+		InValidateLighterUser(ctx context.Context, in *proto1.IdRequest, out *LighterResponse) error
 	}
 	type LighterService struct {
 		lighterService
@@ -126,7 +166,7 @@ type lighterServiceHandler struct {
 	LighterServiceHandler
 }
 
-func (h *lighterServiceHandler) CreateLighter(ctx context.Context, in *CreateLighterRequest, out *LighterResponse) error {
+func (h *lighterServiceHandler) CreateLighter(ctx context.Context, in *LighterRequest, out *LighterResponse) error {
 	return h.LighterServiceHandler.CreateLighter(ctx, in, out)
 }
 
@@ -140,4 +180,16 @@ func (h *lighterServiceHandler) GetLighterByEmail(ctx context.Context, in *proto
 
 func (h *lighterServiceHandler) GetLighters(ctx context.Context, in *proto1.Empty, out *LighterResponse) error {
 	return h.LighterServiceHandler.GetLighters(ctx, in, out)
+}
+
+func (h *lighterServiceHandler) VerifyLighterUser(ctx context.Context, in *proto1.IdRequest, out *LighterResponse) error {
+	return h.LighterServiceHandler.VerifyLighterUser(ctx, in, out)
+}
+
+func (h *lighterServiceHandler) ValidateLighterUser(ctx context.Context, in *proto1.IdRequest, out *LighterResponse) error {
+	return h.LighterServiceHandler.ValidateLighterUser(ctx, in, out)
+}
+
+func (h *lighterServiceHandler) InValidateLighterUser(ctx context.Context, in *proto1.IdRequest, out *LighterResponse) error {
+	return h.LighterServiceHandler.InValidateLighterUser(ctx, in, out)
 }

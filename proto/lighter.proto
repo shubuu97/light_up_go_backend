@@ -3,33 +3,50 @@ syntax = 'proto3';
 package proto;
 
 import "common.proto";
+import "google/protobuf/timestamp.proto";
 
 
 option go_package = "light-up-backend/lighter-service/proto";
 
 service LighterService {
-    rpc CreateLighter (CreateLighterRequest) returns (LighterResponse) {}
+    rpc CreateLighter (LighterRequest) returns (LighterResponse) {}
     rpc GetLighterById (IdRequest) returns (LighterResponse) {}
     rpc GetLighterByEmail (EmailRequest) returns (LighterResponse) {}
     rpc GetLighters (Empty) returns (LighterResponse) {}
+
+    rpc VerifyLighterUser (IdRequest) returns (LighterResponse) {}
+    rpc ValidateLighterUser (IdRequest) returns (LighterResponse) {}
+    rpc InValidateLighterUser (IdRequest) returns (LighterResponse) {}
+
 }
 
-message Lighter{
+message Lighter {
     string id = 1;
-    string firstName = 2;
-    string lastName = 3;
-    string email = 4;
-    string password = 5;
-    string mobile = 6;
-    string country = 7;
-    string state = 8;
-    string city = 9;
-    string image = 10;
-    bool isActive = 11;
-    UserTypes type = 12;
+    User user = 2;
+    google.protobuf.Timestamp lastLogin = 3;
+    google.protobuf.Timestamp modifiedOn = 4;
+    google.protobuf.Timestamp createdOn = 5;
+    bool verified = 6;
+    string institute = 7;
 }
 
-message CreateLighterRequest{
+message Institute {
+    string id = 1;
+    InstituteType instituteType = 2;
+    bool priorCounsellingExperience = 3;
+    Address address = 4;
+}
+
+enum InstituteType {
+    UNKNOWN = 0;
+    INDIVIDUAL = 1;
+    EDUCATIONAL_INSTITUTE = 2;
+    COUNSELLING_INSTITUTE = 3;
+    FOREIGN_STUDY = 4;
+    DMIT_CENTER = 5;
+}
+
+message LighterRequest{
     Lighter lighter = 1;
 }
 

@@ -41,7 +41,7 @@ func (l LighterRepository) userCollection() *mongo.Collection {
 }
 
 func (l LighterRepository) CreateLighter(ctx context.Context, lighter *proto.Lighter) error {
-	lighter.Email = strings.ToLower(lighter.Email)
+	lighter.User.Email = strings.ToLower(lighter.User.Email)
 	_, err := l.userCollection().InsertOne(ctx, lighter)
 	if err != nil {
 		return errors.Wrap(err, "Could not insert lighter.")
@@ -51,7 +51,7 @@ func (l LighterRepository) CreateLighter(ctx context.Context, lighter *proto.Lig
 }
 
 func (l LighterRepository) UpdateLighter(ctx context.Context, lighter *proto.Lighter) error {
-	lighter.Email = strings.ToLower(lighter.Email)
+	lighter.User.Email = strings.ToLower(lighter.User.Email)
 	if _, err := l.userCollection().UpdateOne(ctx, bson.M{"id": lighter.Id}, bson.D{{"$set", lighter}}); err != nil {
 		return errors.Wrap(err, "Could not update the lighter.")
 	} else {
@@ -71,7 +71,7 @@ func (l LighterRepository) GetLighterByEmail(ctx context.Context, email string) 
 func (l LighterRepository) GetLighterById(ctx context.Context, id string) (*proto.Lighter, error) {
 	result := proto.Lighter{}
 	if err := l.userCollection().FindOne(ctx, bson.M{"id": id}).Decode(&result); err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("Could not get the lighter by id:s %s", id))
+		return nil, errors.Wrap(err, fmt.Sprintf("Could not get the lighter by id: %s", id))
 	} else {
 		return &result, nil
 	}

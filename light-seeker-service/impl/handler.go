@@ -16,7 +16,7 @@ func NewHandler(service *LightSeekerService) Handler {
 	}
 }
 
-func (h Handler) CreateLightSeeker(ctx context.Context, req *proto.CreateLightSeekerRequest, res *proto.LightSeekerResponse) error {
+func (h Handler) CreateLightSeeker(ctx context.Context, req *proto.LightSeekerRequest, res *proto.LightSeekerResponse) error {
 	if lightSeeker, err := h.service.CreateLightSeeker(ctx, req.LightSeeker); err != nil {
 		return err
 	} else {
@@ -48,6 +48,24 @@ func (h Handler) GetLightSeekers(ctx context.Context, req *common.Empty, res *pr
 		return err
 	} else {
 		res.LightSeekers = lightSeekers
+		return nil
+	}
+}
+
+func (h Handler) ValidateLightSeekerUser(ctx context.Context, req *common.IdRequest, res *proto.LightSeekerResponse) error {
+	if lightSeeker, err := h.service.ValidateLightSeekerUser(ctx, req.Id); err != nil {
+		return err
+	} else {
+		res.LightSeeker = lightSeeker
+		return nil
+	}
+}
+
+func (h Handler) InValidateLightSeekerUser(ctx context.Context, req *common.IdRequest, res *proto.LightSeekerResponse) error {
+	if lightSeeker, err := h.service.InValidateLightSeekerUser(ctx, req.Id); err != nil {
+		return err
+	} else {
+		res.LightSeeker = lightSeeker
 		return nil
 	}
 }

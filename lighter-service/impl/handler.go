@@ -16,7 +16,8 @@ func NewHandler(service *LighterService) Handler {
 	}
 }
 
-func (h Handler) CreateLighter(ctx context.Context, req *proto.CreateLighterRequest, res *proto.LighterResponse) error {
+
+func (h Handler) CreateLighter(ctx context.Context, req *proto.LighterRequest, res *proto.LighterResponse) error {
 	if lighter, err := h.service.CreateLighter(ctx, req.Lighter); err != nil {
 		return err
 	} else {
@@ -48,6 +49,33 @@ func (h Handler) GetLighters(ctx context.Context, req *common.Empty, res *proto.
 		return err
 	} else {
 		res.Lighters = lighters
+		return nil
+	}
+}
+
+func (h Handler) VerifyLighterUser(ctx context.Context, req *common.IdRequest, res *proto.LighterResponse) error {
+	if lighter, err := h.service.VerifyLighterUser(ctx, req.Id); err != nil {
+		return err
+	} else {
+		res.Lighter = lighter
+		return nil
+	}
+}
+
+func (h Handler) ValidateLighterUser(ctx context.Context, req *common.IdRequest, res *proto.LighterResponse) error {
+	if lighter, err := h.service.ValidateLighterUser(ctx, req.Id); err != nil {
+		return err
+	} else {
+		res.Lighter = lighter
+		return nil
+	}
+}
+
+func (h Handler) InValidateLighterUser(ctx context.Context, req *common.IdRequest, res *proto.LighterResponse) error {
+	if lighter, err := h.service.InValidateLighterUser(ctx, req.Id); err != nil {
+		return err
+	} else {
+		res.Lighter = lighter
 		return nil
 	}
 }

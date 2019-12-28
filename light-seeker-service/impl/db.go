@@ -41,7 +41,7 @@ func (l LightSeekerRepository) userCollection() *mongo.Collection {
 }
 
 func (l LightSeekerRepository) CreateLightSeeker(ctx context.Context, lightSeeker *proto.LightSeeker) error {
-	lightSeeker.Email = strings.ToLower(lightSeeker.Email)
+	lightSeeker.User.Email = strings.ToLower(lightSeeker.User.Email)
 	_, err := l.userCollection().InsertOne(ctx, lightSeeker)
 	if err != nil {
 		return errors.Wrap(err, "Could not insert light seeker.")
@@ -51,7 +51,7 @@ func (l LightSeekerRepository) CreateLightSeeker(ctx context.Context, lightSeeke
 }
 
 func (l LightSeekerRepository) UpdateLightSeeker(ctx context.Context, lightSeeker *proto.LightSeeker) error {
-	lightSeeker.Email = strings.ToLower(lightSeeker.Email)
+	lightSeeker.User.Email = strings.ToLower(lightSeeker.User.Email)
 	if _, err := l.userCollection().UpdateOne(ctx, bson.M{"id": lightSeeker.Id}, bson.D{{"$set", lightSeeker}}); err != nil {
 		return errors.Wrap(err, "Could not update the light seeker.")
 	} else {

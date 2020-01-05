@@ -17,7 +17,7 @@ type LightSeekerService struct {
 
 func NewLightSeekerService(repository LightSeekerRepository, client client.Client) *LightSeekerService {
 	return &LightSeekerService{
-		repository: repository,
+		repository:repository,
 	}
 }
 
@@ -27,7 +27,7 @@ func (s LightSeekerService) CreateLightSeeker(ctx context.Context, lightSeeker *
 	pwd, err := utils.HashPassword(lightSeeker.User.Password)
 	if err != nil {
 		logger.WithField("Error", err.Error()).Warningln("Could not hash password.")
-		return nil, errors.Wrap(err, "CreateLighter.")
+		return nil, errors.Wrap(err, "CreateLightSeeker.")
 	}
 	lightSeeker.User.Password = pwd
 	lightSeeker.User.IsValid = true
@@ -43,6 +43,7 @@ func (s LightSeekerService) CreateLightSeeker(ctx context.Context, lightSeeker *
 
 func (s LightSeekerService) UpdateLightSeeker(ctx context.Context, lightSeeker *proto.LightSeeker) (*proto.LightSeeker, error) {
 	logger := middleware.GetLogger(ctx)
+	lightSeeker.User.IsValid = true
 	lightSeeker.ModifiedOn = ptypes.TimestampNow()
 	if err := s.repository.UpdateLightSeeker(ctx, lightSeeker); err != nil {
 		logger.WithField("Error", err.Error()).Warningln("Could not update light seeker.")

@@ -12,12 +12,16 @@ import (
 )
 
 const (
-	AuthenticationServiceName = "light-up-authentication-service"
-	LightSeekerServiceName    = "light-up-light-seeker-service"
-	LighterServiceName        = "light-up-lighter-service"
-	BFFServiceName            = "light-up-bff-service"
-	LighterServiceDB          = "light-up-lighters"
-	LightSeekerServiceDB      = "light-up-light-seekers"
+	AuthenticationServiceName = "lu-authentication-service"
+	LightSeekerServiceName    = "lu-light-seeker-service"
+	LighterServiceName        = "lu-lighter-service"
+	AdminServiceName          = "lu-admin-service"
+	EntityServiceName         = "lu-entity-service"
+	BFFServiceName            = "lu-bff-service"
+	LighterServiceDB          = "lu-lighters"
+	AdminServiceDB            = "lu-admins"
+	LightSeekerServiceDB      = "lu-light-seekers"
+	EntityServiceDB           = "lu-light-entities"
 )
 
 type ApplicationDbCredentials struct {
@@ -102,6 +106,20 @@ func (a ApplicationConfig) AuthenticationServiceConfig() ServiceConfigurations {
 	)
 }
 
+func (a ApplicationConfig) AdminServiceConfig() ServiceConfigurations {
+	return a.buildServiceConfig(
+		AdminServiceName,
+		AdminServiceDB,
+	)
+}
+
+func (a ApplicationConfig) EntityServiceConfig() ServiceConfigurations {
+	return a.buildServiceConfig(
+		EntityServiceName,
+		EntityServiceDB,
+	)
+}
+
 func (a ApplicationConfig) buildServiceConfig(serviceName, serviceDbName string) ServiceConfigurations {
 	return ServiceConfigurations{
 		ServiceName: serviceName,
@@ -131,7 +149,7 @@ func buildDbCredentials(hostname, port, username, password string) ApplicationDb
 func LocalApplicationConfig() ApplicationConfig {
 	return buildApplicationConfig(
 		"local",
-		buildDbCredentials("localhost", "3306", "", ""),
+		buildDbCredentials("localhost", "27017", "", ""),
 	)
 }
 

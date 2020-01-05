@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+
 	ctx := middleware.NewContext("main")
 	logger := middleware.GetLogger(ctx)
 	config := common.GetApplicationConfig().AuthenticationServiceConfig()

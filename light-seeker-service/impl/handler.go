@@ -10,12 +10,6 @@ type Handler struct {
 	service *LightSeekerService
 }
 
-func NewHandler(service *LightSeekerService) Handler {
-	return Handler{
-		service: service,
-	}
-}
-
 func (h Handler) CreateLightSeeker(ctx context.Context, req *proto.LightSeekerRequest, res *proto.LightSeekerResponse) error {
 	if lightSeeker, err := h.service.CreateLightSeeker(ctx, req.LightSeeker); err != nil {
 		return err
@@ -69,3 +63,11 @@ func (h Handler) InValidateLightSeekerUser(ctx context.Context, req *common.IdRe
 		return nil
 	}
 }
+
+func NewHandler(service *LightSeekerService) Handler {
+	return Handler{
+		service: service,
+	}
+}
+
+

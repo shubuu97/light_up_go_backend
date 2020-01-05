@@ -94,3 +94,4 @@ func (l LightSeekerRepository) GetAllLightSeekers(ctx context.Context) ([]*proto
 	}
 	return result, nil
 }
+

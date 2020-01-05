@@ -76,17 +76,17 @@ func (s Service) LoginLightSeeker(ctx context.Context, password string, email st
 	if err != nil {
 		return "", errors.Wrap(err, "Could not find the user by email.")
 	}
-	if lightSeekerResponse.LightSeeker.IsActive == false {
-		return "", errors.New("Account is not active.")
+	if lightSeekerResponse.LightSeeker.User.IsValid == false {
+		return "", errors.New("User account is not valid anymore.")
 	}
 
-	err = utils.CompareHashAndPassword(lightSeekerResponse.LightSeeker.Password, password)
+	err = utils.CompareHashAndPassword(lightSeekerResponse.LightSeeker.User.Password, password)
 	if err != nil {
 		return "", errors.Wrap(err, "Wrong password.")
 	}
 
 	claim := &Claim{
-		UserEmail: lightSeekerResponse.LightSeeker.Email,
+		UserEmail: lightSeekerResponse.LightSeeker.User.Email,
 		UserId:    lightSeekerResponse.LightSeeker.Id,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: defaultTokenExpiry(),
@@ -108,17 +108,17 @@ func (s Service) LoginLighter(ctx context.Context, password, email string) (stri
 	if err != nil {
 		return "", errors.Wrap(err, "Could not find the user by email.")
 	}
-	if lighterResponse.Lighter.IsActive == false {
-		return "", errors.New("Account is not active.")
+	if lighterResponse.Lighter.User.IsValid == false {
+		return "", errors.New("User is not valid anymore.")
 	}
 
-	err = utils.CompareHashAndPassword(lighterResponse.Lighter.Password, password)
+	err = utils.CompareHashAndPassword(lighterResponse.Lighter.User.Password, password)
 	if err != nil {
 		return "", errors.Wrap(err, "Wrong password.")
 	}
 
 	claim := &Claim{
-		UserEmail: lighterResponse.Lighter.Email,
+		UserEmail: lighterResponse.Lighter.User.Email,
 		UserId:    lighterResponse.Lighter.Id,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: defaultTokenExpiry(),

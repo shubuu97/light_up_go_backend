@@ -1,0 +1,52 @@
+syntax = 'proto3';
+
+package proto;
+
+import "common.proto";
+
+option go_package = "light-up-backend/entity-service/proto";
+
+service EntityService {
+
+    // Education Qualification
+    rpc AddEducationQualification (EducationQualificationRequest) returns (EducationQualificationResponse) {}
+    rpc GetEducationQualificationById (IdRequest) returns (EducationQualificationResponse) {}
+    rpc GetAllEducationQualifications (Empty) returns (EducationQualificationResponse) {}
+
+    // Occupation
+    rpc AddOccupation (OccupationRequest) returns (OccupationResponse) {}
+    rpc GetOccupationById (IdRequest) returns (OccupationResponse) {}
+    rpc GetAllOccupations (Empty) returns (OccupationResponse) {}
+
+    // Institutes
+    rpc AddInstitute (InstituteRequest) returns (InstituteResponse) {}
+    rpc GetInstituteById (IdRequest) returns (InstituteResponse) {}
+    rpc GetAllInstitutes (Empty) returns (InstituteResponse) {}
+}
+
+message EducationQualificationRequest {
+    EducationQualification educationQualification = 1;
+}
+
+message EducationQualificationResponse {
+    EducationQualification educationQualification = 1;
+    repeated EducationQualification educationQualifications = 2;
+}
+
+message OccupationRequest {
+    Occupation occupation = 1;
+}
+
+message OccupationResponse {
+    Occupation occupation = 1;
+    repeated Occupation occupations = 2;
+}
+
+message InstituteRequest {
+    Institute institute = 1;
+}
+
+message InstituteResponse {
+    Institute institute = 1;
+    repeated Institute institutes = 2;
+}

@@ -4,27 +4,27 @@ import (
 	"light-up-backend/common"
 	"light-up-backend/common/middleware"
 	"light-up-backend/common/utils"
-	"light-up-backend/lighter-service/impl"
-	"light-up-backend/lighter-service/proto"
+	"light-up-backend/entity-service/impl"
+	"light-up-backend/entity-service/proto"
 )
 
 func main() {
 	ctx := middleware.NewContext("main")
 	logger := middleware.GetLogger(ctx)
 	applicationConfigs := common.GetApplicationConfig()
-	configs := applicationConfigs.LighterServiceConfiguration()
+	configs := applicationConfigs.EntityServiceConfig()
 	service := utils.CreateService(configs.ServiceName)
-	repository := impl.NewLighterRepository(ctx, configs)
+	repository := impl.NewEntityRepository(ctx, configs)
 	defer repository.Close()
 
 	handler := impl.NewHandler(
-		impl.NewLighterService(
+		impl.NewEntityService(
 			repository,
 			service.Client(),
 		),
 	)
 
-	err := proto.RegisterLighterServiceHandler(
+	err := proto.RegisterEntityServiceHandler(
 		service.Server(),
 		&handler,
 	)

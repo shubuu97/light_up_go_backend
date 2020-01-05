@@ -9,10 +9,8 @@ option go_package = "light-up-backend/admin-service/proto";
 
 service AdminService {
 
-    // Education Qualification
-    rpc AddEducationQualification (CreateEducationQualificationRequest) returns (EducationQualificationResponse) {}
-    rpc GetEducationQualificationById (IdRequest) returns (EducationQualificationResponse) {}
-    rpc GetAllEducationQualifications (Empty) returns (EducationQualificationResponse) {}
+    rpc CreateAdmin(AdminRequest) returns(AdminResponse){}
+
 }
 
 message Admin {
@@ -24,11 +22,11 @@ message Admin {
     bool isSuper = 6;
 }
 
-message CreateEducationQualificationRequest {
-    EducationQualification educationQualification = 1;
+message AdminRequest {
+    Admin admin = 1;
 }
 
-message EducationQualificationResponse {
-    EducationQualification educationQualification = 1;
-    repeated EducationQualification educationQualifications = 2;
+message AdminResponse {
+    Admin admin = 1;
+    repeated Admin admins = 2;
 }

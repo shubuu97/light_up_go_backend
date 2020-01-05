@@ -16,7 +16,6 @@ func NewHandler(service *LighterService) Handler {
 	}
 }
 
-
 func (h Handler) CreateLighter(ctx context.Context, req *proto.LighterRequest, res *proto.LighterResponse) error {
 	if lighter, err := h.service.CreateLighter(ctx, req.Lighter); err != nil {
 		return err

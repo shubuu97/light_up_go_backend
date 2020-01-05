@@ -30,22 +30,6 @@ message Lighter {
     string institute = 7;
 }
 
-message Institute {
-    string id = 1;
-    InstituteType instituteType = 2;
-    bool priorCounsellingExperience = 3;
-    Address address = 4;
-}
-
-enum InstituteType {
-    UNKNOWN = 0;
-    INDIVIDUAL = 1;
-    EDUCATIONAL_INSTITUTE = 2;
-    COUNSELLING_INSTITUTE = 3;
-    FOREIGN_STUDY = 4;
-    DMIT_CENTER = 5;
-}
-
 message LighterRequest{
     Lighter lighter = 1;
 }

@@ -5,3 +5,4 @@ protoc -I light-up-backend/proto  --go_out=. --micro_out=. light-up-backend/prot
 protoc -I light-up-backend/proto  --go_out=. --micro_out=. light-up-backend/proto/lighter.proto
 protoc -I light-up-backend/proto  --go_out=. --micro_out=. light-up-backend/proto/lightSeeker.proto
 protoc -I light-up-backend/proto  --go_out=. --micro_out=. light-up-backend/proto/admin.proto
+protoc -I light-up-backend/proto  --go_out=. --micro_out=. light-up-backend/proto/entity.proto

@@ -13,6 +13,8 @@ import (
 	"light-up-backend/common/utils"
 	lightSeekerService "light-up-backend/light-seeker-service/proto"
 	lighterService "light-up-backend/lighter-service/proto"
+	adminService "light-up-backend/admin-service/proto"
+	entityService "light-up-backend/entity-service/proto"
 	"net/http"
 	"strings"
 )
@@ -21,6 +23,8 @@ type genericHandler struct {
 	LighterServiceClient        lighterService.LighterService
 	LightSeekerServiceClient    lightSeekerService.LightSeekerService
 	AuthenticationServiceClient authenticationService.AuthenticationService
+	AdminServiceClient adminService.AdminService
+	EntityServiceClient entityService.EntityService
 }
 
 func RegisterGenericEndpoints(router *mux.Router, client client.Client, appConfig common.ApplicationConfig) {
@@ -28,6 +32,8 @@ func RegisterGenericEndpoints(router *mux.Router, client client.Client, appConfi
 		LighterServiceClient:        lighterService.CreateNewLighterServiceClient(client),
 		LightSeekerServiceClient:    lightSeekerService.CreateNewLightSeekerServiceClient(client),
 		AuthenticationServiceClient: authenticationService.CreateNewAuthenticationServiceClient(client),
+		AdminServiceClient: adminService.CreateNewAdminServiceClient(client),
+		EntityServiceClient: entityService.CreateNewLightSeekerServiceClient(client),
 	}
 
 	genericBase := mux.NewRouter()
@@ -41,20 +47,35 @@ func RegisterGenericEndpoints(router *mux.Router, client client.Client, appConfi
 	generic := genericBase.PathPrefix("/api").Subrouter()
 
 	// Lighter
-	generic.Path("/Lighter/OnBoard").HandlerFunc(handler.onBoardLighter)
+	generic.Path("/Lighter/onBoard").HandlerFunc(handler.onBoardLighter)
 	generic.Path("/Lighter/getByEmail").HandlerFunc(handler.lighterOnly(handler.getLighterByEmail))
 	generic.Path("/Lighter/getById").HandlerFunc(handler.lighterOnly(handler.getLighterById))
 	generic.Path("/Lighter/getAll").HandlerFunc(handler.adminOnly(handler.getAllLighters))
 	// LightSeeker
-	generic.Path("/LightSeeker/OnBoard").HandlerFunc(handler.onBoardLightSeeker)
+	generic.Path("/LightSeeker/onBoard").HandlerFunc(handler.onBoardLightSeeker)
 	generic.Path("/LightSeeker/getByEmail").HandlerFunc(handler.lightSeekerOnly(handler.getLightSeekerByEmail))
 	generic.Path("/LightSeeker/getById").HandlerFunc(handler.lightSeekerOnly(handler.getLightSeekerById))
 	generic.Path("/LightSeeker/getAll").HandlerFunc(handler.adminOnly(handler.getAllLightSeekers))
-
+	// Admin
+	generic.Path("/Admin/onBoard").HandlerFunc(handler.onBoardAdmin)
+	// Entity
+	  // Institute
+	generic.Path("/Entity/Institute/create").HandlerFunc(handler.adminOnly(handler.createInstitute))
+	generic.Path("/Entity/Institute/getById").HandlerFunc(handler.getInstituteById)
+	generic.Path("/Entity/Institute/getAll").HandlerFunc(handler.getAllInstitutes)
+	  // Occupation
+	generic.Path("/Entity/Occupation/create").HandlerFunc(handler.adminOnly(handler.createOccupation))
+	generic.Path("/Entity/Occupation/getById").HandlerFunc(handler.getOccupationById)
+	generic.Path("/Entity/Occupation/getAll").HandlerFunc(handler.getAllOccupations)
+	  // Educational Qualifications
+	generic.Path("/Entity/EducationalQualification/create").HandlerFunc(handler.adminOnly(handler.createEducationalQualifications))
+	generic.Path("/Entity/EducationalQualification/getById").HandlerFunc(handler.getEducationalQualificationsById)
+	generic.Path("/Entity/EducationalQualification/getAll").HandlerFunc(handler.getAllEducationalQualifications)
 }
 
+// Lighter
 func (g genericHandler) onBoardLighter(res http.ResponseWriter, req *http.Request) {
-	request := &lighterService.CreateLighterRequest{}
+	request := &lighterService.LighterRequest{}
 	err := json.NewDecoder(req.Body).Decode(request)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
@@ -117,8 +138,9 @@ func (g genericHandler) getAllLighters(res http.ResponseWriter, req *http.Reques
 	}
 }
 
+// Light Seeker
 func (g genericHandler) onBoardLightSeeker(res http.ResponseWriter, req *http.Request) {
-	request := &lightSeekerService.CreateLightSeekerRequest{}
+	request := &lightSeekerService.LightSeekerRequest{}
 	err := json.NewDecoder(req.Body).Decode(request)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
@@ -181,6 +203,172 @@ func (g genericHandler) getAllLightSeekers(res http.ResponseWriter, req *http.Re
 	}
 }
 
+// Admin
+func (g genericHandler) onBoardAdmin(res http.ResponseWriter, req *http.Request) {
+	request := &adminService.AdminRequest{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.AdminServiceClient.CreateAdmin(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+// Entity
+  // Institute
+func (g genericHandler) createInstitute(res http.ResponseWriter, req *http.Request) {
+	request := &entityService.InstituteRequest{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.AddInstitute(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+func (g genericHandler) getInstituteById(res http.ResponseWriter, req *http.Request) {
+	request := &proto.IdRequest{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.GetInstituteById(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+func (g genericHandler) getAllInstitutes(res http.ResponseWriter, req *http.Request) {
+	request := &proto.Empty{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.GetAllInstitutes(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+// Occupation
+func (g genericHandler) createOccupation(res http.ResponseWriter, req *http.Request) {
+	request := &entityService.OccupationRequest{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.AddOccupation(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+func (g genericHandler) getOccupationById(res http.ResponseWriter, req *http.Request) {
+	request := &proto.IdRequest{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.GetOccupationById(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+func (g genericHandler) getAllOccupations(res http.ResponseWriter, req *http.Request) {
+	request := &proto.Empty{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.GetAllOccupations(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+  // Educational Qualifications
+func (g genericHandler) createEducationalQualifications(res http.ResponseWriter, req *http.Request) {
+	request := &entityService.EducationQualificationRequest{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.AddEducationQualification(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+func (g genericHandler) getEducationalQualificationsById(res http.ResponseWriter, req *http.Request) {
+	request := &proto.IdRequest{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.GetEducationQualificationById(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+func (g genericHandler) getAllEducationalQualifications(res http.ResponseWriter, req *http.Request) {
+	request := &proto.Empty{}
+	err := json.NewDecoder(req.Body).Decode(request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	response, err := g.EntityServiceClient.GetAllEducationQualifications(middleware.FromRequest(req), request)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		_ = json.NewEncoder(res).Encode(response)
+	}
+}
+
+// Authentication
 func (g genericHandler) lighterOnly(handlerFunc http.HandlerFunc) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		if token, err := extractToken(req); err != nil {

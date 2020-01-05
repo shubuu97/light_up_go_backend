@@ -43,6 +43,7 @@ func (s LighterService) CreateLighter(ctx context.Context, lighter *proto.Lighte
 
 func (s LighterService) UpdateLighter(ctx context.Context, lighter *proto.Lighter) (*proto.Lighter, error) {
 	logger := middleware.GetLogger(ctx)
+	lighter.User.IsValid = true
 	lighter.ModifiedOn = ptypes.TimestampNow()
 	if err := s.repository.UpdateLighter(ctx, lighter); err != nil {
 		logger.WithField("Error", err.Error()).Warningln("Could not update lighter.")

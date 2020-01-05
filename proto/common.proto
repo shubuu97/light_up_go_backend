@@ -29,7 +29,7 @@ message User {
     Location address = 6;
     string profilePictureURL = 7;
     UserTypes type = 8;
-    Occupations occupation = 9;
+    Occupation occupation = 9;
     string educationQualification = 10;
     bool isValid = 11;
 }
@@ -53,7 +53,31 @@ enum UserTypes {
     ADMIN = 2;
 }
 
-enum Occupations {
+message EducationQualification {
+    string id = 1;
+    string name = 2;
+}
+
+enum InstituteType {
+    INSTITUTE_TYPE_UNKNOWN = 0;
+    INDIVIDUAL = 1;
+    EDUCATIONAL_INSTITUTE = 2;
+    COUNSELLING_INSTITUTE = 3;
+    FOREIGN_STUDY = 4;
+    DMIT_CENTER = 5;
+}
+
+message Institute {
+    string id = 1;
+    InstituteType type = 2;
+    bool priorCounsellingExperience = 3;
+    int32 priorCounsellingExperienceInYears = 4;
+    bool isCertified = 5;
+    string certificationType = 6;
+    Address address = 7;
+}
+
+enum OccupationType {
     UNKNOWN = 0;
     STUDENT = 1;
     BUSINESS = 2;
@@ -63,7 +87,8 @@ enum Occupations {
     OTHER = 6;
 }
 
-message EducationQualification {
+message Occupation {
     string id = 1;
-    string name = 2;
+    OccupationType type = 2;
+    string name = 3;
 }

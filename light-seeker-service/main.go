@@ -9,18 +9,17 @@ import (
 )
 
 func main() {
+
 	ctx := middleware.NewContext("main")
 	logger := middleware.GetLogger(ctx)
 	applicationConfigs := common.GetApplicationConfig()
 	configs := applicationConfigs.LightSeekerServiceConfiguration()
-
 	service := utils.CreateService(configs.ServiceName)
 	repository := impl.NewLightSeekerRepository(ctx, configs)
 	defer repository.Close()
 
 	handler := impl.NewHandler(
-		impl.NewLightSeekerService(
-			repository,
+		impl.NewLightSeekerService(repository,
 			service.Client(),
 		),
 	)
@@ -37,4 +36,5 @@ func main() {
 	if err = service.Run(); err != nil {
 		logger.Fatal(err)
 	}
+
 }

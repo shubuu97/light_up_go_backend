@@ -9,7 +9,7 @@ import "google/protobuf/timestamp.proto";
 option go_package = "light-up-backend/lighter-service/proto";
 
 service LighterService {
-    rpc CreateLighter (LighterRequest) returns (LighterResponse) {}
+    rpc CreateLighter (Lighter) returns (LighterResponse) {}
     rpc GetLighterById (IdRequest) returns (LighterResponse) {}
     rpc GetLighterByEmail (EmailRequest) returns (LighterResponse) {}
     rpc GetLighters (Empty) returns (LighterResponse) {}
@@ -28,10 +28,6 @@ message Lighter {
     google.protobuf.Timestamp createdOn = 5;
     bool verified = 6;
     string institute = 7;
-}
-
-message LighterRequest{
-    Lighter lighter = 1;
 }
 
 message LighterResponse{

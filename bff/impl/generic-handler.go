@@ -6,15 +6,15 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/micro/go-micro/client"
 	"github.com/urfave/negroni"
+	adminService "light-up-backend/admin-service/proto"
 	authenticationService "light-up-backend/authentication-service/proto"
 	"light-up-backend/common"
 	"light-up-backend/common/middleware"
 	"light-up-backend/common/proto"
 	"light-up-backend/common/utils"
+	entityService "light-up-backend/entity-service/proto"
 	lightSeekerService "light-up-backend/light-seeker-service/proto"
 	lighterService "light-up-backend/lighter-service/proto"
-	adminService "light-up-backend/admin-service/proto"
-	entityService "light-up-backend/entity-service/proto"
 	"net/http"
 	"strings"
 )
@@ -23,8 +23,8 @@ type genericHandler struct {
 	LighterServiceClient        lighterService.LighterService
 	LightSeekerServiceClient    lightSeekerService.LightSeekerService
 	AuthenticationServiceClient authenticationService.AuthenticationService
-	AdminServiceClient adminService.AdminService
-	EntityServiceClient entityService.EntityService
+	AdminServiceClient          adminService.AdminService
+	EntityServiceClient         entityService.EntityService
 }
 
 func RegisterGenericEndpoints(router *mux.Router, client client.Client, appConfig common.ApplicationConfig) {
@@ -32,8 +32,8 @@ func RegisterGenericEndpoints(router *mux.Router, client client.Client, appConfi
 		LighterServiceClient:        lighterService.CreateNewLighterServiceClient(client),
 		LightSeekerServiceClient:    lightSeekerService.CreateNewLightSeekerServiceClient(client),
 		AuthenticationServiceClient: authenticationService.CreateNewAuthenticationServiceClient(client),
-		AdminServiceClient: adminService.CreateNewAdminServiceClient(client),
-		EntityServiceClient: entityService.CreateNewLightSeekerServiceClient(client),
+		AdminServiceClient:          adminService.CreateNewAdminServiceClient(client),
+		EntityServiceClient:         entityService.CreateNewLightSeekerServiceClient(client),
 	}
 
 	genericBase := mux.NewRouter()
@@ -59,15 +59,15 @@ func RegisterGenericEndpoints(router *mux.Router, client client.Client, appConfi
 	// Admin
 	generic.Path("/Admin/onBoard").HandlerFunc(handler.onBoardAdmin)
 	// Entity
-	  // Institute
+	// Institute
 	generic.Path("/Entity/Institute/create").HandlerFunc(handler.adminOnly(handler.createInstitute))
 	generic.Path("/Entity/Institute/getById").HandlerFunc(handler.getInstituteById)
 	generic.Path("/Entity/Institute/getAll").HandlerFunc(handler.getAllInstitutes)
-	  // Occupation
+	// Occupation
 	generic.Path("/Entity/Occupation/create").HandlerFunc(handler.adminOnly(handler.createOccupation))
 	generic.Path("/Entity/Occupation/getById").HandlerFunc(handler.getOccupationById)
 	generic.Path("/Entity/Occupation/getAll").HandlerFunc(handler.getAllOccupations)
-	  // Educational Qualifications
+	// Educational Qualifications
 	generic.Path("/Entity/EducationalQualification/create").HandlerFunc(handler.adminOnly(handler.createEducationalQualifications))
 	generic.Path("/Entity/EducationalQualification/getById").HandlerFunc(handler.getEducationalQualificationsById)
 	generic.Path("/Entity/EducationalQualification/getAll").HandlerFunc(handler.getAllEducationalQualifications)
@@ -75,7 +75,7 @@ func RegisterGenericEndpoints(router *mux.Router, client client.Client, appConfi
 
 // Lighter
 func (g genericHandler) onBoardLighter(res http.ResponseWriter, req *http.Request) {
-	request := &lighterService.LighterRequest{}
+	request := &lighterService.Lighter{}
 	err := json.NewDecoder(req.Body).Decode(request)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
@@ -140,7 +140,7 @@ func (g genericHandler) getAllLighters(res http.ResponseWriter, req *http.Reques
 
 // Light Seeker
 func (g genericHandler) onBoardLightSeeker(res http.ResponseWriter, req *http.Request) {
-	request := &lightSeekerService.LightSeekerRequest{}
+	request := &lightSeekerService.LightSeeker{}
 	err := json.NewDecoder(req.Body).Decode(request)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
@@ -221,7 +221,7 @@ func (g genericHandler) onBoardAdmin(res http.ResponseWriter, req *http.Request)
 }
 
 // Entity
-  // Institute
+// Institute
 func (g genericHandler) createInstitute(res http.ResponseWriter, req *http.Request) {
 	request := &entityService.InstituteRequest{}
 	err := json.NewDecoder(req.Body).Decode(request)
@@ -319,7 +319,7 @@ func (g genericHandler) getAllOccupations(res http.ResponseWriter, req *http.Req
 	}
 }
 
-  // Educational Qualifications
+// Educational Qualifications
 func (g genericHandler) createEducationalQualifications(res http.ResponseWriter, req *http.Request) {
 	request := &entityService.EducationQualificationRequest{}
 	err := json.NewDecoder(req.Body).Decode(request)

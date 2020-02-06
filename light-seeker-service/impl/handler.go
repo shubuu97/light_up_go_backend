@@ -10,8 +10,8 @@ type Handler struct {
 	service *LightSeekerService
 }
 
-func (h Handler) CreateLightSeeker(ctx context.Context, req *proto.LightSeekerRequest, res *proto.LightSeekerResponse) error {
-	if lightSeeker, err := h.service.CreateLightSeeker(ctx, req.LightSeeker); err != nil {
+func (h Handler) CreateLightSeeker(ctx context.Context, req *proto.LightSeeker, res *proto.LightSeekerResponse) error {
+	if lightSeeker, err := h.service.CreateLightSeeker(ctx, req); err != nil {
 		return err
 	} else {
 		res.LightSeeker = lightSeeker
@@ -69,5 +69,3 @@ func NewHandler(service *LightSeekerService) Handler {
 		service: service,
 	}
 }
-
-
